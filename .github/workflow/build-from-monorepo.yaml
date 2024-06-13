@@ -1,0 +1,30 @@
+on:
+  repository_dispatch:
+    types: [build-from-monorepo]
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout monorepo
+        uses: actions/checkout@v4
+        with:
+          repository: kfranqueiro/test-monorepo
+          ref: main
+          path: monorepo
+          sparse-checkout: |
+            child
+            common
+      - name: Checkout child repo
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: child
+      - name: Copy files
+        run: |
+          cp -r monorepo/common child/common
+          cp -r monorepo/child child
+      - name: Push new files to child repo
+        run: |
+          git commit -am "Sync from monorepo"
+          git push origin gh-pages
+        working-directory: child
