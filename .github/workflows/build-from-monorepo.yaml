@@ -1,4 +1,6 @@
 on: workflow_dispatch
+permissions:
+  contents: write
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -17,7 +19,6 @@ jobs:
         with:
           ref: gh-pages
           path: child
-          token: ${{ secrets.PAT_TOKEN }}
       - name: Copy files
         run: |
           cp -r monorepo/common child/common
